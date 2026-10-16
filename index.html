@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ulangan Geografi - Pembangunan Wilayah</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background:#d8d3c7;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    padding:30px 15px;
+    color:#1a1a1a;
+    min-height:100vh;
+  }
+
+  .kertas {
+    max-width:760px;
+    margin:0 auto;
+    background:#fbf8ee;
+    padding:45px 50px 55px;
+    box-shadow: 2px 3px 0 #b8b2a4, 4px 6px 12px rgba(0,0,0,0.15);
+    position:relative;
+    border:1px solid #c9c3b3;
+  }
+
+  .kertas::before {
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 27px,
+      #ece7d8 27px, #ece7d8 28px
+    );
+    opacity:0.35;
+    pointer-events:none;
+  }
+
+  .isi { position:relative; z-index:1; }
+
+  /* kop */
+  .kop {
+    text-align:center;
+    border-bottom:2px double #333;
+    padding-bottom:12px;
+    margin-bottom:22px;
+  }
+
+  .kop h1 {
+    font-size:1.05rem;
+    letter-spacing:1px;
+    font-weight:normal;
+    text-transform:uppercase;
+    color:#2c2c2c;
+  }
+
+  .kop h2 {
+    font-size:1.3rem;
+    margin-top:4px;
+    font-weight:bold;
+  }
+
+  .kop h3 {
+    font-size:1rem;
+    margin-top:4px;
+    font-weight:normal;
+    color:#444;
+    font-style:italic;
+  }
+
+  .kop p {
+    font-size:0.85rem;
+    margin-top:6px;
+    color:#555;
+    font-style:italic;
+  }
+
+  /* info siswa */
+  .info {
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 30px;
+    font-size:0.9rem;
+    margin-bottom:22px;
+    padding-bottom:14px;
+    border-bottom:1px solid #b8b2a4;
+  }
+
+  .info div { display:flex; gap:6px; }
+  .info span.label { min-width:55px; }
+  .info span.garis {
+    flex:1;
+    border-bottom:1px dotted #666;
+    min-width:100px;
+  }
+
+  /* judul bagian */
+  .bagian {
+    text-align:center;
+    font-weight:bold;
+    font-size:1rem;
+    letter-spacing:1px;
+    margin:26px 0 16px;
+    text-transform:uppercase;
+  }
+
+  .bagian::before { content:"— "; color:#999; }
+  .bagian::after { content:" —"; color:#999; }
+
+  /* petunjuk */
+  .petunjuk {
+    font-size:0.85rem;
+    font-style:italic;
+    background:#f2eddf;
+    border-left:3px solid #7a6f57;
+    padding:8px 14px;
+    margin-bottom:20px;
+    color:#4a4438;
+  }
+
+  /* soal */
+  .soal {
+    margin-bottom:20px;
+    font-size:0.98rem;
+    line-height:1.55;
+  }
+
+  .soal .nomor {
+    font-weight:bold;
+    margin-right:4px;
+  }
+
+  .soal .pertanyaan {
+    margin-bottom:8px;
+  }
+
+  /* opsi */
+  .opsi {
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    margin-left:18px;
+    font-size:0.95rem;
+  }
+
+  .opsi label {
+    display:flex;
+    gap:6px;
+    padding:3px 8px;
+    border-radius:3px;
+    cursor:pointer;
+    transition:background 0.15s;
+    line-height:1.5;
+  }
+
+  .opsi label:hover { background:#efe9d8; }
+
+  .opsi label.betul {
+    background:#d7e8cf;
+    border-left:4px solid #4a7a3a;
+  }
+
+  .opsi label.salah {
+    background:#f0d5d5;
+    border-left:4px solid #9c3b3b;
+    text-decoration:line-through;
+    color:#7a2828;
+  }
+
+  .opsi input { margin-top:5px; accent-color:#4a7a3a; }
+
+  .kunci {
+    margin-top:8px;
+    margin-left:18px;
+    font-size:0.85rem;
+    color:#3d6b2e;
+    font-style:italic;
+    padding:5px 10px;
+    background:#eef5e8;
+    border-left:3px solid #6b9c56;
+    display:none;
+  }
+
+  .kunci.tampil { display:block; }
+
+  /* uraian */
+  .uraian {
+    margin-bottom:22px;
+    font-size:0.98rem;
+    line-height:1.55;
+  }
+
+  .uraian .pertanyaan {
+    margin-bottom:6px;
+    font-weight:600;
+  }
+
+  .uraian .jawaban {
+    display:none;
+    margin:8px 0 0 18px;
+    padding:10px 14px;
+    background:#eef5e8;
+    border-left:3px solid #6b9c56;
+    font-size:0.9rem;
+    line-height:1.6;
+    white-space:pre-line;
+  }
+
+  .uraian .jawaban.tampil { display:block; }
+
+  .bukakunci {
+    font-family:inherit;
+    font-size:0.78rem;
+    background:none;
+    border:1px dashed #7a6f57;
+    color:#5a5040;
+    padding:3px 10px;
+    margin-left:18px;
+    margin-top:6px;
+    cursor:pointer;
+    border-radius:3px;
+  }
+
+  .bukakunci:hover { background:#f2eddf; }
+
+  /* footer */
+  .footer {
+    margin-top:36px;
+    padding-top:14px;
+    border-top:2px double #333;
+    text-align:center;
+    font-size:0.8rem;
+    color:#666;
+    font-style:italic;
+  }
+
+  .nilai-box {
+    margin-top:24px;
+    border:2px solid #333;
+    padding:14px 20px;
+    text-align:center;
+    background:#f2eddf;
+    font-size:0.95rem;
+  }
+
+  .nilai-box .angka {
+    font-size:2.1rem;
+    font-weight:bold;
+    color:#3d6b2e;
+    margin:4px 0;
+    font-family:'Georgia', serif;
+  }
+
+  .nilai-box .sub {
+    font-size:0.8rem;
+    color:#666;
+  }
+
+  @media (max-width:600px) {
+    .kertas { padding:28px 20px 35px; }
+    .kop h2 { font-size:1.05rem; }
+    .info { font-size:0.82rem; }
+    .soal, .uraian { font-size:0.9rem; }
+    .opsi { font-size:0.88rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="kertas">
+  <div class="isi">
+
+    <div class="kop">
+      <h1>Lembar Ulangan</h1>
+      <h2>Mata Pelajaran: Geografi</h2>
+      <h3>Materi: Pembangunan Wilayah &amp; Perubahan Muka Bumi</h3>
+      <p>Kelas XII — Semester Ganjil — Tahun Pelajaran 2025/2026</p>
+    </div>
+
+    <div class="info">
+      <div><span class="label">Nama</span> <span class="garis" style="min-width:180px;"></span></div>
+      <div><span class="label">Kelas</span> <span class="garis" style="min-width:70px;"></span></div>
+      <div><span class="label">Tanggal</span> <span class="garis" style="min-width:90px;"></span></div>
+    </div>
+
+    <div class="petunjuk">
+      <strong>Petunjuk:</strong> Pilihlah satu jawaban yang paling tepat (A/B/C/D/E). Klik salah satu pilihan untuk mengetahui jawabannya benar atau salah. Jawaban yang benar akan disorot hijau, jawaban salah akan dicoret.
+    </div>
+
+    <div class="bagian">A. Pilihan Ganda</div>
+    <div id="soalPG"></div>
+
+    <div class="bagian">B. Uraian</div>
+    <div id="soalUraian"></div>
+
+    <div class="nilai-box" id="nilaiBox" style="display:none;">
+      <div>Nilai Pilihan Ganda</div>
+      <div class="angka" id="nilaiAngka">0</div>
+      <div class="sub" id="nilaiSub">Benar 0 dari 10 soal (maks. 100)</div>
+      <div id="nilaiKet" style="font-size:0.9rem;color:#444;margin-top:6px;"></div>
+    </div>
+
+    <div class="footer">
+      ~ Kerjakan dengan teliti dan jujur ~
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ============ DATA SOAL PILIHAN GANDA ============ */
+var soalPG = [
+  {
+    q: "Pembangunan wilayah bertujuan untuk ....",
+    opsi: [
+      "Meningkatkan kesenjangan antardaerah",
+      "Meningkatkan kesejahteraan masyarakat",
+      "Mengurangi fasilitas umum",
+      "Membatasi kegiatan ekonomi",
+      "Mengurangi jumlah penduduk"
+    ],
+    jawab: 1
+  },
+  {
+    q: "Salah satu faktor yang memengaruhi pembangunan wilayah adalah ....",
+    opsi: [
+      "Kondisi geografis dan sumber daya alam",
+      "Warna bangunan",
+      "Jenis pakaian masyarakat",
+      "Bentuk rumah saja",
+      "Jumlah kendaraan pribadi saja"
+    ],
+    jawab: 0
+  },
+  {
+    q: "Pendekatan pembangunan top-down adalah pembangunan yang ....",
+    opsi: [
+      "Direncanakan oleh masyarakat saja",
+      "Tidak memiliki tujuan",
+      "Ditentukan oleh pemerintah atau pihak atas",
+      "Dilakukan tanpa perencanaan",
+      "Hanya menguntungkan individu"
+    ],
+    jawab: 2
+  },
+  {
+    q: "Salah satu contoh perubahan muka bumi akibat aktivitas manusia adalah ....",
+    opsi: [
+      "Gempa bumi alami",
+      "Letusan gunung api",
+      "Pengikisan pantai oleh ombak",
+      "Penambangan dan pembangunan jalan",
+      "Pergerakan lempeng tektonik"
+    ],
+    jawab: 3
+  },
+  {
+    q: "Penggundulan hutan secara berlebihan dapat menyebabkan ....",
+    opsi: [
+      "Meningkatnya kesuburan tanah di semua tempat",
+      "Banjir dan tanah longsor",
+      "Berkurangnya risiko erosi",
+      "Bertambahnya daerah resapan air",
+      "Udara semakin bersih"
+    ],
+    jawab: 1
+  },
+  {
+    q: "Perubahan muka bumi yang disebabkan oleh tenaga endogen berasal dari ....",
+    opsi: [
+      "Dalam bumi",
+      "Air hujan",
+      "Angin",
+      "Sinar matahari",
+      "Aktivitas manusia saja"
+    ],
+    jawab: 0
+  },
+  {
+    q: "Berikut yang termasuk tenaga eksogen adalah ....",
+    opsi: [
+      "Tektonisme",
+      "Vulkanisme",
+      "Gempa tektonik",
+      "Erosi",
+      "Pergerakan lempeng"
+    ],
+    jawab: 3
+  },
+  {
+    q: "Pembangunan berkelanjutan bertujuan untuk ....",
+    opsi: [
+      "Menghabiskan sumber daya alam",
+      "Mengutamakan keuntungan tanpa batas",
+      "Memenuhi kebutuhan saat ini tanpa mengabaikan generasi mendatang",
+      "Memperluas kota tanpa perencanaan",
+      "Menghilangkan seluruh kawasan hutan"
+    ],
+    jawab: 2
+  },
+  {
+    q: "Contoh upaya mengurangi dampak negatif pembangunan terhadap lingkungan adalah ....",
+    opsi: [
+      "Membuang sampah ke sungai",
+      "Menebang semua pohon",
+      "Melakukan reboisasi",
+      "Menambang tanpa aturan",
+      "Menutup seluruh daerah resapan air"
+    ],
+    jawab: 2
+  },
+  {
+    q: "Erosi adalah proses ....",
+    opsi: [
+      "Pembentukan batuan di dalam bumi",
+      "Pengikisan tanah atau batuan oleh air, angin, atau es",
+      "Pengangkatan kerak bumi akibat tektonisme",
+      "Pembentukan gunung api",
+      "Pergerakan lempeng bumi"
+    ],
+    jawab: 1
+  }
+];
+
+/* ============ DATA SOAL URAIAN ============ */
+var soalUraian = [
+  {
+    q: "Jelaskan pengertian pembangunan wilayah!",
+    a: "Pembangunan wilayah adalah proses mengembangkan suatu daerah untuk meningkatkan kesejahteraan masyarakat melalui pembangunan fasilitas, ekonomi, pendidikan, kesehatan, dan infrastruktur."
+  },
+  {
+    q: "Sebutkan tiga faktor yang memengaruhi pembangunan wilayah!",
+    a: "• Kondisi geografis wilayah.\n• Ketersediaan sumber daya alam.\n• Kualitas sumber daya manusia."
+  },
+  {
+    q: "Jelaskan perbedaan tenaga endogen dan tenaga eksogen!",
+    a: "• Tenaga endogen: tenaga yang berasal dari dalam bumi, seperti tektonisme, vulkanisme, dan gempa bumi.\n• Tenaga eksogen: tenaga yang berasal dari luar bumi, seperti erosi, pelapukan, dan sedimentasi."
+  },
+  {
+    q: "Sebutkan tiga contoh perubahan muka bumi akibat aktivitas manusia!",
+    a: "• Penambangan yang mengubah bentuk permukaan tanah.\n• Pembangunan jalan dan gedung yang mengubah penggunaan lahan.\n• Penggundulan hutan yang dapat meningkatkan risiko erosi dan longsor."
+  },
+  {
+    q: "Bagaimana cara menjaga lingkungan agar dampak pembangunan terhadap muka bumi dapat dikurangi?",
+    a: "Caranya adalah melakukan reboisasi, menjaga kawasan resapan air, mengelola limbah dengan benar, membatasi penambangan yang merusak lingkungan, serta melaksanakan pembangunan sesuai dengan tata ruang."
+  }
+];
+
+/* ============ STATE ============ */
+var jumlahBenar = 0;
+var sudahDijawab = {};
+
+/* ============ RENDER PG ============ */
+(function renderPG(){
+  var wadah = document.getElementById('soalPG');
+  for (var i = 0; i < soalPG.length; i++) {
+    (function(nomor){
+      var s = soalPG[nomor];
+      var div = document.createElement('div');
+      div.className = 'soal';
+
+      var p = document.createElement('div');
+      p.className = 'pertanyaan';
+      p.innerHTML = '<span class="nomor">' + (nomor+1) + '.</span> ' + s.q;
+      div.appendChild(p);
+
+      var opsi = document.createElement('div');
+      opsi.className = 'opsi';
+
+      for (var j = 0; j < s.opsi.length; j++) {
+        (function(idx){
+          var label = document.createElement('label');
+          label.setAttribute('data-idx', idx);
+
+          var input = document.createElement('input');
+          input.type = 'radio';
+          input.name = 'pg' + nomor;
+          input.value = idx;
+
+          var span = document.createElement('span');
+          span.textContent = String.fromCharCode(65 + idx) + '. ' + s.opsi[idx];
+
+          label.appendChild(input);
+          label.appendChild(span);
+
+          input.addEventListener('change', function(){
+            jawabPG(nomor, idx, label, opsi, div);
+          });
+
+          opsi.appendChild(label);
+        })(j);
+      }
+
+      div.appendChild(opsi);
+      wadah.appendChild(div);
+    })(i);
+  }
+})();
+
+function jawabPG(nomor, idx, labelDipilih, wadahOpsi, divSoal) {
+  if (sudahDijawab[nomor]) return;
+  sudahDijawab[nomor] = true;
+
+  var jawabanBenar = soalPG[nomor].jawab;
+  var semuaLabel = wadahOpsi.querySelectorAll('label');
+
+  for (var k = 0; k < semuaLabel.length; k++) {
+    semuaLabel[k].querySelector('input').disabled = true;
+  }
+
+  if (idx === jawabanBenar) {
+    labelDipilih.classList.add('betul');
+    jumlahBenar++;
+  } else {
+    labelDipilih.classList.add('salah');
+    for (var m = 0; m < semuaLabel.length; m++) {
+      if (parseInt(semuaLabel[m].getAttribute('data-idx')) === jawabanBenar) {
+        semuaLabel[m].classList.add('betul');
+      }
+    }
+  }
+
+  var kunci = document.createElement('div');
+  kunci.className = 'kunci tampil';
+  kunci.textContent = 'Kunci: ' + String.fromCharCode(65 + jawabanBenar) + '. ' + soalPG[nomor].opsi[jawabanBenar];
+  divSoal.appendChild(kunci);
+
+  perbaruiNilai();
+}
+
+/* ============ RENDER URAIAN ============ */
+(function renderUraian(){
+  var wadah = document.getElementById('soalUraian');
+  for (var i = 0; i < soalUraian.length; i++) {
+    (function(nomor){
+      var s = soalUraian[nomor];
+      var div = document.createElement('div');
+      div.className = 'uraian';
+
+      var p = document.createElement('div');
+      p.className = 'pertanyaan';
+      p.innerHTML = '<span class="nomor">' + (nomor+1) + '.</span> ' + s.q;
+      div.appendChild(p);
+
+      var btn = document.createElement('button');
+      btn.className = 'bukakunci';
+      btn.textContent = 'Lihat Jawaban';
+      btn.addEventListener('click', function(){
+        var jawaban = div.querySelector('.jawaban');
+        if (jawaban.classList.contains('tampil')) {
+          jawaban.classList.remove('tampil');
+          btn.textContent = 'Lihat Jawaban';
+        } else {
+          jawaban.classList.add('tampil');
+          btn.textContent = 'Sembunyikan Jawaban';
+        }
+      });
+      div.appendChild(btn);
+
+      var jawaban = document.createElement('div');
+      jawaban.className = 'jawaban';
+      jawaban.textContent = s.a;
+      div.appendChild(jawaban);
+
+      wadah.appendChild(div);
+    })(i);
+  }
+})();
+
+/* ============ NILAI ============ */
+function perbaruiNilai() {
+  var box = document.getElementById('nilaiBox');
+  var angka = document.getElementById('nilaiAngka');
+  var sub = document.getElementById('nilaiSub');
+  var ket = document.getElementById('nilaiKet');
+
+  box.style.display = 'block';
+  var nilai = jumlahBenar * 10; // 10 soal, tiap benar = 10
+  angka.textContent = nilai;
+  sub.textContent = 'Benar ' + jumlahBenar + ' dari ' + soalPG.length + ' soal (maks. 100)';
+
+  if (nilai === 100) {
+    ket.textContent = '🌟 Sempurna! Semua jawaban benar.';
+  } else if (nilai >= 70) {
+    ket.textContent = '👍 Bagus! Pemahamanmu sudah baik.';
+  } else if (nilai >= 40) {
+    ket.textContent = '📖 Cukup. Pelajari lagi materi yang salah.';
+  } else {
+    ket.textContent = '💪 Ayo semangat belajar lagi!';
+  }
+}
+</script>
+
+</body>
+</html>
